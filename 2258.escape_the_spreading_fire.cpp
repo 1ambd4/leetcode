@@ -9,6 +9,7 @@ using std::vector, std::queue, std::array;
 // 0: grass
 // 1: fire   => 0
 // 2: wall   => -1
+// 第51组数据 TLE 了，不想写了，优化不了一点
 int maximum_minutes(vector<vector<int>>& g)
 {
     int m = g.size(), n = g[0].size();
@@ -32,15 +33,16 @@ int maximum_minutes(vector<vector<int>>& g)
         q.push({x, y});
         vector<vector<int>> vis(m, vector<int>(n, 0));
 
+        vis[x][y] = 1;
         while (!q.empty()) {
             auto [x, y] = q.front();
             q.pop();
-            vis[x][y] = 1;
 
             for (const auto [nx, ny] : adj(x, y)) {
                 if (g[nx][ny] != -1 && vis[nx][ny] != 1) {
                     g[nx][ny] = std::min(g[nx][ny], g[x][y] + 1);
                     q.push({nx, ny});
+                    vis[nx][ny] = 1;
                 }
             }
         }
@@ -82,7 +84,10 @@ int maximum_minutes(vector<vector<int>>& g)
 
                 for (const auto [nx, ny] : adj(x, y)) {
                     // not fire and wall
-                    if (vis[nx][ny] != 1 && g[nx][ny] != 0 && g[nx][ny] != -1) {
+                    // if (vis[nx][ny] != 1 && g[nx][ny] != 0 && g[nx][ny] != -1) {
+                    // 里面还会判断 g[nx][ny] >= t，因为 t 一定是大于零的
+                    // 故而外面不需要判断了
+                    if (vis[nx][ny] != 1) {
                         // 最后一个格子可以直接进去，难崩
                         if (nx == m - 1 && ny == n - 1 && g[nx][ny] >= t) {
                             return true;
@@ -104,7 +109,8 @@ int maximum_minutes(vector<vector<int>>& g)
     // 那么就可以枚举所有可能的 t 了啊
     // 还可以用二分加快
     // 从 (0,0) bfs 到 (m-1,n-1)
-    int l = 0, r = 90000;
+    int N = m * n + 10;
+    int l = 0, r = N;
     while (l < r) {
         int m = (l + r + 1) >> 1;
         if (bfs(m)) l = m;
@@ -113,7 +119,7 @@ int maximum_minutes(vector<vector<int>>& g)
 
     if (l == 0) {
         return bfs(0) ? 0 : -1;
-    } else if (l == 90000) {
+    } else if (l == N) {
         return 1e9l;
     } else {
         return l;
