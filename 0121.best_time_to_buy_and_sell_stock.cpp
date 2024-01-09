@@ -23,31 +23,32 @@ int max_profit(vector<int>& prices)
 // 单调栈
 int _max_profit(vector<int>& prices)
 {
-    stack<int> s;
+    stack<int> stk;
     int res = 0;
-    for (auto e : prices) {
-        if (s.empty()) {
-            s.push(e);
+    for (auto price : prices) {
+    if (stk.empty()) {
+        stk.push(price);
             continue;
         }
 
-        if (e <= s.top()) {
-            s.push(e);
+        if (price <= stk.top()) {
+            stk.push(price);
         } else {
-            res = std::max(res, e - s.top());
+            res = std::max(res, price - stk.top());
         }
     }
     return res;
 }
 
+// 贪心算法
 int __max_profit(vector<int>& prices)
 {
     int min = prices[0], res = 0;
-    for (auto e : prices) {
-        if (e < min) {
-            min = e;
+    for (auto price : prices) {
+        if (price < min) {
+            min = price;
         } else {
-            res = std::max(res, e - min);
+            res = std::max(res, price - min);
         }
     }
     return res;
