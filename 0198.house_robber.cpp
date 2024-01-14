@@ -8,6 +8,23 @@ using std::vector;
 int rob(vector<int>& nums)
 {
     int n = nums.size();
+    if (n == 1) return nums[0];
+
+    // f[i]: 到达第 i 个位置的可偷窃最大金额
+    vector<int> f(n, 0);
+    f[0] = nums[0];
+    f[1] = std::max(nums[0], nums[1]);
+
+    for (int i = 2; i < n; ++i) {
+        f[i] = std::max(f[i-1], f[i-2] + nums[i]);
+    }
+
+    return f[n-1];
+}
+
+int _rob(vector<int>& nums)
+{
+    int n = nums.size();
     if (n == 0) return nums[0];
 
     vector<int> dp(n, 0);
