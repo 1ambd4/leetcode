@@ -8,6 +8,52 @@ using std::string;
 
 string min_window(string s, string t)
 {
+    int n = s.size();
+
+    int l = 0;
+    int r = 0;
+
+    std::unordered_map<char, int> window;
+    std::unordered_map<char, int> need;
+    int valid = 0;
+
+    for (const auto c : t) need[c]++;
+
+    // 子串的起始坐标
+    int res = 0;
+    int len = std::numeric_limits<int>::max();
+
+    while (r < n) {
+        // 右扩
+        char c = s[r];
+        if (need.count(c)) {
+            window[c]++;
+            if (window[c] == need[c]) ++valid;
+        }
+        r++;
+
+        while (valid == need.size()) {
+            // 更新答案
+            if (r - l < len) {
+                res = l;
+                len = r - l;
+            }
+
+            // 左缩
+            char c = s[l];
+            if (need.count(c)) {
+                if (window[c] == need.count(c)) --valid;
+                window[c]--;
+            }
+            l++;
+        }
+    }
+
+    return len == std::numeric_limits<int>::max() ? "" : s.substr(res, len);
+}
+
+string _min_window(string s, string t)
+{
     std::unordered_map<char, int> window;
     std::unordered_map<char, int> need;
 
